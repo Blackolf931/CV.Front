@@ -69,6 +69,10 @@
         <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.map" />
         <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\LICENSE.txt" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="package-lock.json" />
+    </ItemGroup>
     <Target Name="NpmInstall" BeforeTargets="BeforeBuild">
         <Exec Command="npm install" />
     </Target>

@@ -1,0 +1,5 @@
+﻿# UI Dependencies
+wwwroot/vendor.min.js
+wwwroot/vendor.min.css
+package-lock.json
+node_modules

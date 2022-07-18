@@ -1,0 +1,23 @@
+[
+  {
+    "outputFileName": "wwwroot/vendor.min.css",
+    "inputFiles": [
+      "node_modules/bootstrap/dist/css/bootstrap.min.css"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/vendor.min.js",
+    "inputFiles": [
+      "node_modules/popper.js/dist/umd/popper.min.js",
+      "node_modules/jquery/dist/jquery.min.js",
+      "node_modules/jquery-validation/dist/jquery.validate.js",
+      "node_modules/jquery-validation/dist/jquery.validate.unobtrusive.min.js"
+    ],
+    "minify": {
+      "enabled": true
+    }
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "name": "cv",
+  "private": true,
+  "devDependencies": {
+    "bootstrap": "*",
+    "jquery": "*",
+    "jquery-validation": "*",
+    "jquery-validation-unobtrusive": "*",
+    "popper.js": "*"
+  }
+}

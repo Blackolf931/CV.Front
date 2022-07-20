@@ -8,5 +8,6 @@
     "jquery-validation": "*",
     "jquery-validation-unobtrusive": "*",
     "popper.js": "*"
-  }
+  },
+  "dependencies": {}
 }

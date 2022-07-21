@@ -1,3 +1,5 @@
+using Serilog;
+
 namespace CV
 {
     public class Program
@@ -8,8 +10,13 @@ namespace CV
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Host.UseSerilog((hostingContext, services, loggerConfiguration) => loggerConfiguration
+                    .ReadFrom.Configuration(hostingContext.Configuration)
+                    .ReadFrom.Services(services));
 
             var app = builder.Build();
+
+            app.UseSerilogRequestLogging();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

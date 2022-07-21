@@ -5,12 +5,12 @@ namespace CV.Controllers
 {
     public class EmployeeController : Controller
     {
-        public ActionResult Index()
+        public IActionResult Index()
         {
             return View();
         }
 
-        public ActionResult EmployeeList()
+        public IActionResult EmployeeList()
         {
             List<Employee> employees = new List<Employee>();
             employees.Add(new Employee(0, "Name1", "Surname1", "Patronymic1"));

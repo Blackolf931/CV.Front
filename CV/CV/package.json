@@ -3,7 +3,7 @@
   "name": "cv",
   "private": true,
   "devDependencies": {
-    "bootstrap": "*",
+    "bootstrap": "5.1.3",
     "jquery": "*",
     "jquery-validation": "*",
     "jquery-validation-unobtrusive": "*",

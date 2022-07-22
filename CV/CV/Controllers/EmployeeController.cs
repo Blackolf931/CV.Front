@@ -1,5 +1,10 @@
-﻿using CV.Models;
+﻿using System.Data;
+using System.Net.Http.Headers;
+using System.Text;
+using CV.Constants;
+using CV.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace CV.Controllers
 {
@@ -10,16 +15,37 @@ namespace CV.Controllers
             return View();
         }
 
-        public IActionResult EmployeeList()
+        public async Task<IActionResult> EmployeeList()
         {
-            List<Employee> employees = new List<Employee>();
-            employees.Add(new Employee(0, "Name1", "Surname1", "Patronymic1"));
-            employees.Add(new Employee(0, "Name2", "Surname2", "Patronymic2"));
-            employees.Add(new Employee(0, "Name3", "Surname3", "Patronymic3")); 
-            employees.Add(new Employee(0, "Name4", "Surname4", "Patronymic4"));
-            employees.Add(new Employee(0, "Name5", "Surname5", "Patronymic5"));
+            IEnumerable<Employee> employeeList = new List<Employee>();
 
-            return View(employees);
+            HttpClient client = new();
+            HttpResponseMessage response = new ();
+            response = await client.GetAsync(ApiUri.Employee);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsStringAsync().Result;
+                employeeList = JsonConvert.DeserializeObject<IEnumerable<Employee>>(result);
+            }
+
+            return View(employeeList);
+        }
+
+        public IActionResult AddEmployee()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(Employee employee)
+        {
+            var jsonObj = JsonConvert.SerializeObject(employee);
+            HttpContent content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
+            HttpClient client = new();
+            var response = await client.PostAsync(ApiUri.Employee, content);
+
+            return RedirectToAction("EmployeeList");
         }
     }
 }

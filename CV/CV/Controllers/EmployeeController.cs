@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Net.Http.Headers;
-using System.Text;
+﻿using System.Text;
 using CV.Constants;
 using CV.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -49,6 +47,49 @@ namespace CV.Controllers
             }
 
             return View("CreateEmployee");
+        }
+
+        public async Task<IActionResult> EditEmployeeAsync(int id)
+        {
+            Employee employee;
+            var response = await client.GetAsync(ApiUri.Employee + $"/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                employee = JsonConvert.DeserializeObject<Employee>(data);
+
+                return View(employee);
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult EditEmployeeAsync(Employee employee)
+        {
+            string data = JsonConvert.SerializeObject(employee);
+            HttpContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            var response = client.PutAsync(ApiUri.Employee + $"/{employee.Id}", content).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("EmployeeList");
+            }
+
+            return View("EditEmployee", employee);
+        }
+
+        public async Task<IActionResult> DeleteEmployeeAsync(int id)
+        {
+            var response = await client.DeleteAsync(ApiUri.Employee + $"/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("EmployeeList");
+            }
+
+            return View("EmployeeList");
         }
     }
 }

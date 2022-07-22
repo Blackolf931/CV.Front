@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Net.Http.Headers;
-using System.Text;
+﻿using System.Text;
 using CV.Constants;
 using CV.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +8,8 @@ namespace CV.Controllers
 {
     public class EmployeeController : Controller
     {
+        private readonly HttpClient client = new HttpClient();
+
         public IActionResult Index()
         {
             return View();
@@ -18,10 +18,7 @@ namespace CV.Controllers
         public async Task<IActionResult> EmployeeList()
         {
             IEnumerable<Employee> employeeList = new List<Employee>();
-
-            HttpClient client = new();
-            HttpResponseMessage response = new ();
-            response = await client.GetAsync(ApiUri.Employee);
+            var response = await client.GetAsync(ApiUri.Employee);
 
             if (response.IsSuccessStatusCode)
             {
@@ -32,20 +29,67 @@ namespace CV.Controllers
             return View(employeeList);
         }
 
-        public IActionResult AddEmployee()
+        public IActionResult CreateEmployee()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Employee employee)
+        public async Task<IActionResult> CreateEmployeeAsync(Employee employee)
         {
-            var jsonObj = JsonConvert.SerializeObject(employee);
-            HttpContent content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
-            HttpClient client = new();
+            var data = JsonConvert.SerializeObject(employee);
+            HttpContent content = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(ApiUri.Employee, content);
 
-            return RedirectToAction("EmployeeList");
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("EmployeeList");
+            }
+
+            return View("CreateEmployee");
+        }
+
+        public async Task<IActionResult> EditEmployeeAsync(int id)
+        {
+            Employee employee;
+            var response = await client.GetAsync(ApiUri.Employee + $"/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                employee = JsonConvert.DeserializeObject<Employee>(data);
+
+                return View(employee);
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult EditEmployeeAsync(Employee employee)
+        {
+            string data = JsonConvert.SerializeObject(employee);
+            HttpContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            var response = client.PutAsync(ApiUri.Employee + $"/{employee.Id}", content).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("EmployeeList");
+            }
+
+            return View("EditEmployee", employee);
+        }
+
+        public async Task<IActionResult> DeleteEmployeeAsync(int id)
+        {
+            var response = await client.DeleteAsync(ApiUri.Employee + $"/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("EmployeeList");
+            }
+
+            return View("EmployeeList");
         }
     }
 }

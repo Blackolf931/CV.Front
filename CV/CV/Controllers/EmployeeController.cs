@@ -10,6 +10,8 @@ namespace CV.Controllers
 {
     public class EmployeeController : Controller
     {
+        private readonly HttpClient client = new HttpClient();
+
         public IActionResult Index()
         {
             return View();
@@ -18,10 +20,7 @@ namespace CV.Controllers
         public async Task<IActionResult> EmployeeList()
         {
             IEnumerable<Employee> employeeList = new List<Employee>();
-
-            HttpClient client = new();
-            HttpResponseMessage response = new ();
-            response = await client.GetAsync(ApiUri.Employee);
+            var response = await client.GetAsync(ApiUri.Employee);
 
             if (response.IsSuccessStatusCode)
             {
@@ -32,20 +31,24 @@ namespace CV.Controllers
             return View(employeeList);
         }
 
-        public IActionResult AddEmployee()
+        public IActionResult CreateEmployee()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Employee employee)
+        public async Task<IActionResult> CreateEmployeeAsync(Employee employee)
         {
-            var jsonObj = JsonConvert.SerializeObject(employee);
-            HttpContent content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
-            HttpClient client = new();
+            var data = JsonConvert.SerializeObject(employee);
+            HttpContent content = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(ApiUri.Employee, content);
 
-            return RedirectToAction("EmployeeList");
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("EmployeeList");
+            }
+
+            return View("CreateEmployee");
         }
     }
 }
